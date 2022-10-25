@@ -7,6 +7,7 @@ import (
 	"github.com/ethereum/go-ethereum/common"
 	"github.com/ethereum/go-ethereum/log"
 	"github.com/mapprotocol/atlas/cmd/marker/connections"
+	"github.com/mapprotocol/atlas/cmd/marker/constant"
 	"github.com/mapprotocol/atlas/cmd/marker/mapprotocol"
 	"github.com/mapprotocol/atlas/consensus/istanbul"
 	"github.com/mapprotocol/atlas/params"
@@ -140,9 +141,8 @@ func getActiveVotesForValidatorByAccount_(_ *cli.Context, core *listener, key Vo
 	From := key.Voter
 	TargetAddress := key.Validator
 	var ret interface{}
-	ElectionAddress := core.cfg.ElectionParameters.ElectionAddress
-	abiElection := core.cfg.ElectionParameters.ElectionABI
-	m := NewMessageRet1(SolveQueryResult3, core.msgCh, core.cfg, &ret, ElectionAddress, nil, abiElection, "getActiveVotesForValidatorByAccount", TargetAddress, From)
+	m := NewMessageRet1(SolveQueryResult3, core.msgCh, core.cfg, &ret, constant.AddressOfElection,
+		nil, constant.AbiOfElection, "getActiveVotesForValidatorByAccount", TargetAddress, From)
 	go core.writer.ResolveMessage(m)
 	core.waitUntilMsgHandled(1)
 	log.Info("", "Active Vote", ret.(*big.Int))
@@ -159,17 +159,16 @@ func getPendingInfo_(_ *cli.Context, core *listener, key VoterStruct, voterInfo 
 	var Epoch interface{}
 	t := ret{&Value, &Epoch}
 
-	ElectionAddress := core.cfg.ElectionParameters.ElectionAddress
-	abiElection := core.cfg.ElectionParameters.ElectionABI
 	f := func(output []byte) {
-		err := abiElection.UnpackIntoInterface(&t, "pendingInfo", output)
+		err := constant.AbiOfElection.UnpackIntoInterface(&t, "pendingInfo", output)
 		if err != nil {
 			isContinueError = false
 			log.Error("getPendingInfoForValidator", "err", err)
 		}
 
 	}
-	m := NewMessageRet2(SolveQueryResult4, core.msgCh, core.cfg, f, ElectionAddress, nil, abiElection, "pendingInfo", From, TargetAddress)
+	m := NewMessageRet2(SolveQueryResult4, core.msgCh, core.cfg, f, constant.AddressOfElection,
+		nil, constant.AbiOfElection, "pendingInfo", From, TargetAddress)
 	go core.writer.ResolveMessage(m)
 	core.waitUntilMsgHandled(1)
 	p := Epoch.(*big.Int)
@@ -185,9 +184,8 @@ func getActiveVotesForValidator_(_ *cli.Context, core *listener, key VoterStruct
 	TargetAddress := key.Validator
 	valiInfo := validatorMap[voterInfo.Validator]
 	var ret interface{}
-	ElectionAddress := core.cfg.ElectionParameters.ElectionAddress
-	abiElection := core.cfg.ElectionParameters.ElectionABI
-	m := NewMessageRet1(SolveQueryResult3, core.msgCh, core.cfg, &ret, ElectionAddress, nil, abiElection, "getActiveVotesForValidator", TargetAddress)
+	m := NewMessageRet1(SolveQueryResult3, core.msgCh, core.cfg, &ret, constant.AddressOfElection,
+		nil, constant.AbiOfElection, "getActiveVotesForValidator", TargetAddress)
 	go core.writer.ResolveMessage(m)
 	core.waitUntilMsgHandled(1)
 	log.Info("", "Validator all Votes", ret.(*big.Int), "sign", key.Voter.String()+" to "+key.Validator.String())
@@ -200,8 +198,7 @@ func getVoterRewardInfo_(curBlockNumber uint64, core *listener, key VoterStruct,
 	epochNum := istanbul.GetEpochNumber(curBlockNumber, epochSize)
 	EpochLast := big.NewInt(0).SetUint64(istanbul.GetEpochLastBlockNumber(epochNum, epochSize))
 	Epoch := istanbul.GetEpochNumber(curBlockNumber, epochSize)
-	electionContractAddress := core.cfg.ElectionParameters.ElectionAddress
-	query := mapprotocol.BuildQuery(electionContractAddress, mapprotocol.EpochRewardsDistributedToVoters, EpochLast, EpochLast)
+	query := mapprotocol.BuildQuery(constant.AddressOfElection, mapprotocol.EpochRewardsDistributedToVoters, EpochLast, EpochLast)
 	// querying for logs
 	logs, err := core.conn.FilterLogs(context.Background(), query)
 	if err != nil {

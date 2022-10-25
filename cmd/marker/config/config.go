@@ -3,7 +3,6 @@ package config
 import (
 	"crypto/ecdsa"
 	"fmt"
-	"github.com/mapprotocol/atlas/cmd/marker/mapprotocol"
 	"gopkg.in/urfave/cli.v1"
 	"math/big"
 	"syscall"
@@ -76,13 +75,6 @@ type Config struct {
 	Verbosity             string
 	Name                  string
 	MetadataURL           string
-	LockedGoldParameters  LockedGoldParameters
-	AccountsParameters    AccountsParameters
-	ValidatorParameters   ValidatorParameters
-	EpochRewardParameters EpochRewardsParameters
-	TestPoc2Parameters    TestPoc2
-	ElectionParameters    ElectionParameters
-	GoldTokenParameters   GoldTokenParameters
 }
 
 func AssemblyConfig(ctx *cli.Context) (*Config, error) {
@@ -198,35 +190,6 @@ func AssemblyConfig(ctx *cli.Context) (*Config, error) {
 		config.BlsG1Pub = blsG1Pub
 		config.BLSProof = _account.MustBLSProofOfPossession()
 	}
-
-	ValidatorAddress := mapprotocol.MustProxyAddressFor("Validators")
-	LockedGoldAddress := mapprotocol.MustProxyAddressFor("LockedGold")
-	AccountsAddress := mapprotocol.MustProxyAddressFor("Accounts")
-	ElectionAddress := mapprotocol.MustProxyAddressFor("Election")
-	GoldTokenAddress := mapprotocol.MustProxyAddressFor("GoldToken")
-	EpochRewardsAddress := mapprotocol.MustProxyAddressFor("EpochRewards")
-	config.ValidatorParameters.ValidatorAddress = ValidatorAddress
-	config.EpochRewardParameters.EpochRewardsAddress = EpochRewardsAddress
-	config.TestPoc2Parameters.Address = common.HexToAddress("0xb586DC60e9e39F87c9CB8B7D7E30b2f04D40D14c")
-	config.LockedGoldParameters.LockedGoldAddress = LockedGoldAddress
-	config.AccountsParameters.AccountsAddress = AccountsAddress
-	config.ElectionParameters.ElectionAddress = ElectionAddress
-	config.GoldTokenParameters.GoldTokenAddress = GoldTokenAddress
-
-	abiValidators := mapprotocol.AbiFor("Validators")
-	abiLockedGold := mapprotocol.AbiFor("LockedGold")
-	abiAccounts := mapprotocol.AbiFor("Accounts")
-	abiElection := mapprotocol.AbiFor("Election")
-	abiGoldToken := mapprotocol.AbiFor("GoldToken")
-	abiEpochRewards := mapprotocol.AbiFor("EpochRewards")
-
-	config.ValidatorParameters.ValidatorABI = abiValidators
-	config.EpochRewardParameters.EpochRewardsABI = abiEpochRewards
-	config.TestPoc2Parameters.ABI = mapprotocol.AbiFor("TestPoc2")
-	config.LockedGoldParameters.LockedGoldABI = abiLockedGold
-	config.AccountsParameters.AccountsABI = abiAccounts
-	config.ElectionParameters.ElectionABI = abiElection
-	config.GoldTokenParameters.GoldTokenABI = abiGoldToken
 
 	return &config, nil
 }
