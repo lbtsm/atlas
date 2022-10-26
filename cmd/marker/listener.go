@@ -1425,7 +1425,8 @@ func setImplementation(_ *cli.Context, core *listener) error {
 	ContractAddress := core.cfg.ContractAddress
 	ProxyAbi := mapprotocol.AbiFor("Proxy")
 	log.Info("=== setImplementation ===", "admin", core.cfg.From.String())
-	m := NewMessage(SolveSendTranstion1, core.msgCh, core.cfg, ContractAddress, nil, ProxyAbi, "_setImplementation", implementation)
+	m := NewMessage(SolveSendTranstion1, core.msgCh, core.cfg, ContractAddress, nil,
+		ProxyAbi, "_setImplementation", implementation)
 	go core.writer.ResolveMessage(m)
 	core.waitUntilMsgHandled(1)
 	return nil
@@ -1436,7 +1437,8 @@ func setContractOwner(_ *cli.Context, core *listener) error {
 	ContractAddress := core.cfg.ContractAddress //代理地址
 	log.Info("ProxyAddress", "ContractAddress", ContractAddress, "NewOwner", NewOwner.String())
 	log.Info("=== setOwner ===", "admin", core.cfg.From.String())
-	m := NewMessage(SolveSendTranstion1, core.msgCh, core.cfg, ContractAddress, nil, constant.AbiOfValidators, "transferOwnership", NewOwner)
+	m := NewMessage(SolveSendTranstion1, core.msgCh, core.cfg, ContractAddress,
+		nil, constant.AbiOfValidators, "transferOwnership", NewOwner)
 	go core.writer.ResolveMessage(m)
 	core.waitUntilMsgHandled(1)
 	return nil

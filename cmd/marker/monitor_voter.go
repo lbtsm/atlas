@@ -61,7 +61,8 @@ func pollBlocks(ctx *cli.Context, core *listener, key VoterStruct, voterInfo *Vo
 		if err != nil {
 			panic(err)
 		}
-		log.Info(title, "Epoch", epochNum, "blockNumber", latestBlock, "YourAccount", From, "Validator", TargetAddress, "sign", key.Voter.String()+" to "+key.Validator.String())
+		log.Info(title, "Epoch", epochNum, "blockNumber", latestBlock, "YourAccount",
+			From, "Validator", TargetAddress, "sign", key.Voter.String()+" to "+key.Validator.String())
 		// 查询当前投给validator情况
 		getActiveVotesForValidatorByAccount_(ctx, core, key, voterInfo)
 		getPendingInfo_(ctx, core, key, voterInfo)

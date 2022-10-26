@@ -31,7 +31,8 @@ type Message struct {
 	gasLimit    uint64
 }
 
-func NewMessage(messageType string, ch chan<- struct{}, cfg *config.Config, to common.Address, value *big.Int, abi *abi.ABI, abiMethod string, params ...interface{}) Message {
+func NewMessage(messageType string, ch chan<- struct{}, cfg *config.Config, to common.Address,
+	value *big.Int, abi *abi.ABI, abiMethod string, params ...interface{}) Message {
 	return Message{
 		messageType: messageType,
 		from:        cfg.From,
@@ -47,7 +48,8 @@ func NewMessage(messageType string, ch chan<- struct{}, cfg *config.Config, to c
 }
 
 //NewMessageRet1 need to handle return params
-func NewMessageRet1(messageType string, ch chan<- struct{}, cfg *config.Config, ret interface{}, to common.Address, value *big.Int, abi *abi.ABI, abiMethod string, params ...interface{}) Message {
+func NewMessageRet1(messageType string, ch chan<- struct{}, cfg *config.Config, ret interface{},
+	to common.Address, value *big.Int, abi *abi.ABI, abiMethod string, params ...interface{}) Message {
 	return Message{
 		messageType: messageType,
 		from:        cfg.From,
