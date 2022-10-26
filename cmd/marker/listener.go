@@ -1283,7 +1283,7 @@ func _getValidatorsVotedForByAccount(core *listener, target common.Address) []co
 func getAccountTotalLockedGold(_ *cli.Context, core *listener) error {
 	var ret interface{}
 	log.Info("=== getAccountTotalLockedGold ===", "admin", core.cfg.From, "target", core.cfg.TargetAddress.String())
-	m := NewMessageRet1(SolveQueryResult3, core.msgCh, core.cfg, &ret, constant.AddressOfGoldToken,
+	m := NewMessageRet1(SolveQueryResult3, core.msgCh, core.cfg, &ret, constant.AddressOfLockedGold,
 		nil, constant.AbiOfLockedGold, "getAccountTotalLockedGold", core.cfg.TargetAddress)
 	go core.writer.ResolveMessage(m)
 	core.waitUntilMsgHandled(1)
@@ -1294,7 +1294,7 @@ func getAccountTotalLockedGold(_ *cli.Context, core *listener) error {
 func getAccountNonvotingLockedGold(_ *cli.Context, core *listener) error {
 	var ret interface{}
 	log.Info("=== getAccountNonvotingLockedGold ===", "admin", core.cfg.From, "target", core.cfg.TargetAddress.String())
-	m := NewMessageRet1(SolveQueryResult3, core.msgCh, core.cfg, &ret, constant.AddressOfGoldToken,
+	m := NewMessageRet1(SolveQueryResult3, core.msgCh, core.cfg, &ret, constant.AddressOfLockedGold,
 		nil, constant.AbiOfLockedGold, "getAccountNonvotingLockedGold", core.cfg.TargetAddress)
 	go core.writer.ResolveMessage(m)
 	core.waitUntilMsgHandled(1)
@@ -1348,7 +1348,7 @@ func getPendingWithdrawals(_ *cli.Context, core *listener) error {
 			log.Error("getPendingWithdrawals", "err", err)
 		}
 	}
-	m := NewMessageRet2(SolveQueryResult4, core.msgCh, core.cfg, f, constant.AddressOfGoldToken,
+	m := NewMessageRet2(SolveQueryResult4, core.msgCh, core.cfg, f, constant.AddressOfLockedGold,
 		nil, constant.AbiOfLockedGold, "getPendingWithdrawals", core.cfg.TargetAddress)
 	go core.writer.ResolveMessage(m)
 	core.waitUntilMsgHandled(1)
@@ -1370,7 +1370,7 @@ func lockedMAP(_ *cli.Context, core *listener) error {
 	lockedGold := new(big.Int).Mul(core.cfg.LockedNum, big.NewInt(1e18))
 	log.Info("=== Lock  gold ===")
 	log.Info("Lock  gold", "amount", lockedGold.String())
-	m := NewMessage(SolveSendTranstion2, core.msgCh, core.cfg, constant.AddressOfGoldToken,
+	m := NewMessage(SolveSendTranstion2, core.msgCh, core.cfg, constant.AddressOfLockedGold,
 		nil, constant.AbiOfLockedGold, "lock")
 	go core.writer.ResolveMessage(m)
 	core.waitUntilMsgHandled(1)
@@ -1380,7 +1380,7 @@ func unlockedMAP(_ *cli.Context, core *listener) error {
 	lockedGold := new(big.Int).Mul(core.cfg.LockedNum, big.NewInt(1e18))
 	log.Info("=== unLock validator gold ===")
 	log.Info("unLock validator gold", "amount", lockedGold, "admin", core.cfg.From)
-	m := NewMessage(SolveSendTranstion1, core.msgCh, core.cfg, constant.AddressOfGoldToken,
+	m := NewMessage(SolveSendTranstion1, core.msgCh, core.cfg, constant.AddressOfLockedGold,
 		nil, constant.AbiOfLockedGold, "unlock", lockedGold)
 	go core.writer.ResolveMessage(m)
 	core.waitUntilMsgHandled(1)
@@ -1391,7 +1391,7 @@ func relockMAP(_ *cli.Context, core *listener) error {
 	index := core.cfg.RelockIndex
 	log.Info("=== relockMAP validator gold ===")
 	log.Info("relockMAP validator gold", "amount", lockedGold)
-	m := NewMessage(SolveSendTranstion1, core.msgCh, core.cfg, constant.AddressOfGoldToken,
+	m := NewMessage(SolveSendTranstion1, core.msgCh, core.cfg, constant.AddressOfLockedGold,
 		nil, constant.AbiOfLockedGold, "relock", index, lockedGold)
 	go core.writer.ResolveMessage(m)
 	core.waitUntilMsgHandled(1)
@@ -1400,7 +1400,7 @@ func relockMAP(_ *cli.Context, core *listener) error {
 func withdraw(_ *cli.Context, core *listener) error {
 	index := core.cfg.WithdrawIndex
 	log.Info("=== withdraw validator gold ===", "admin", core.cfg.From.String())
-	m := NewMessage(SolveSendTranstion1, core.msgCh, core.cfg, constant.AddressOfGoldToken,
+	m := NewMessage(SolveSendTranstion1, core.msgCh, core.cfg, constant.AddressOfLockedGold,
 		nil, constant.AbiOfLockedGold, "withdraw", index)
 	go core.writer.ResolveMessage(m)
 	core.waitUntilMsgHandled(1)
@@ -1470,7 +1470,8 @@ func getContractOwner(_ *cli.Context, core *listener) error {
 	log.Info("=== getOwner ===", "admin", core.cfg.From.String())
 	var ret interface{}
 	ContractAddress := core.cfg.TargetAddress
-	m := NewMessageRet1(SolveQueryResult3, core.msgCh, core.cfg, &ret, ContractAddress, nil, constant.AbiOfValidators, "owner")
+	m := NewMessageRet1(SolveQueryResult3, core.msgCh, core.cfg, &ret, ContractAddress,
+		nil, constant.AbiOfValidators, "owner")
 	go core.writer.ResolveMessage(m)
 	core.waitUntilMsgHandled(1)
 	result := ret
